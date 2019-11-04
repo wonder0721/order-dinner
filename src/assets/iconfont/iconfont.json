@@ -1,0 +1,23 @@
+{
+  "id": "1490941",
+  "name": "d'z'j'y",
+  "font_family": "iconfont",
+  "css_prefix_text": "dzjy-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "678258",
+      "name": "锁",
+      "font_class": "password",
+      "unicode": "e692",
+      "unicode_decimal": 59026
+    },
+    {
+      "icon_id": "730799",
+      "name": "用户",
+      "font_class": "user",
+      "unicode": "e677",
+      "unicode_decimal": 58999
+    }
+  ]
+}
