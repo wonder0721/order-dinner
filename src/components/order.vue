@@ -1,25 +1,50 @@
 <template>
   <div id="order">
     <div class="container-box">
-      <h2>点餐</h2>
-      <div>
-        <el-radio v-model="radio1" label="1" border>A套餐（饭 + 水果）</el-radio>
-        <el-radio v-model="radio1" label="2" border>B套餐（仅水果）</el-radio>
+      <div class="menu">
+        <h2>今日菜单</h2>
+        <p>{{menu}}</p>
       </div>
+
+      <div class="food">
+        <h3>请选择套餐类别</h3>
+        <div>
+          <el-radio v-model="radio1" label="A" border>A套餐（饭 + 水果）</el-radio>
+          <el-radio v-model="radio1" label="B" border>B套餐（仅水果）</el-radio>
+        </div>
+      </div>
+
+      <div class="group">
+        <h3>请选择组别</h3>
+        <el-radio-group v-model="radio2">
+          <el-radio-button label="产品"></el-radio-button>
+          <el-radio-button label="前端"></el-radio-button>
+          <el-radio-button label="测试"></el-radio-button>
+          <el-radio-button label="运维"></el-radio-button>
+        </el-radio-group>
+      </div>
+
       <div class="fruit">
-        <el-row :gutter="20">
-          <el-col :span="6" v-for="(item) in fruitData" :key="item.id">
-            <el-card :body-style="{ padding: '0px' }">
-              <img :src="item.src" class="image" />
-              <div style="padding: 14px;">
-                <span>{{item.name}}</span>
-                <div class="bottom clearfix">
-                  <el-button type="text" class="button">操作按钮</el-button>
+        <h3>可选水果类</h3>
+        <div class="fruit-box">
+          <el-row :gutter="10">
+            <el-col :span="4" v-for="(item,i) in fruitList" :key="item.id">
+              <el-card :body-style="{ padding: '0px' }">
+                <img :src="item.src" class="card-image" />
+                <div style="padding: 5px; backgroundColor: lightblue">
+                  <div class="fruit-select">
+                    <span>{{item.name}}</span>
+                    <el-switch v-model="item.active" active-color="#409EFF" inactive-color="#DCDFE6" @change="switchChange(i)"></el-switch>
+                  </div>
                 </div>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
+              </el-card>
+            </el-col>
+          </el-row>
+        </div>
+      </div>
+
+      <div class="submit">
+        <el-button type="primary">提交</el-button>
       </div>
     </div>
   </div>
@@ -29,18 +54,77 @@
 #order {
   text-align: center;
   color: #2c3e50;
+  background-color: #f8f8f8;
   .container-box {
-    width: 1200px;
-    background-color: lightyellow;
+    width: 1100px;
+    background-color: #fff;
+    padding-bottom: 30px;
     margin: 0 auto;
     overflow: hidden;
-    h2 {
-      font-size: 30px;
-      margin: 30px;
-      color: #409eff;
+    .menu {
+      width: 100%;
+      background-color: #409eff;
+      height: 100px;
+      color: #fff;
+      overflow: hidden;
+      h2 {
+        font-size: 30px;
+        color: #fff;
+        margin: 10px auto;
+      }
+      p {
+        font-size: 18px;
+      }
+    }
+    .food {
+      margin-top: 30px;
+      h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #409eff;
+      }
+    }
+    .group {
+      margin-top: 30px;
+      h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #409eff;
+      }
     }
     .fruit {
       margin-top: 30px;
+      h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #409eff;
+      }
+      .fruit-select {
+        display: flex;
+        justify-content: space-between;
+      }
+      .card-image {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .el-card{
+        .active{
+          box-shadow: 0 2px 12px 0 rgba(255,0,0,0.7)
+        } 
+      }
+      /deep/ .el-col-4 {
+        padding-bottom: 5px;
+        padding-top: 5px;
+      }
+    }
+    .submit {
+      width: 100%;
+      margin: 50px 0;
+      box-sizing: border-box;
+      /deep/ .el-button--primary {
+        width: 100%;
+      }
     }
   }
 }
@@ -50,140 +134,192 @@
 export default {
   data() {
     return {
-      radio1: "1",
-      fruitData: [
+      radio1: "A",
+      radio2: "产品",
+      menu: '',
+      menuList: [
+        '无',
+        '鸡腿，啤酒鸭，酱爆猪干，炒生菜',
+        '红烧牛肉，鸭翅根，木须肉酸辣白菜',
+        '红烧虾，土豆烧鸡，肉沫茄子，平菇毛白菜',
+        '红烧鲫鱼，咸鸭烧毛豆，杭辣炒蛋，麻辣豆腐',
+        '雪菜黑鱼，土豆烧鸡，蒜台香肠，大蒜香干',
+        '无'
+      ],
+      fruitList: [
         {
-          name: "青色脆皮金桔（一盒20元）",
+          name: "青色脆皮金桔",
           id: "1",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/金桔.jpg'),
+          active: false,
         },
         {
           name: "红脆李",
           id: "2",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/红脆李.jpg'),
+          active: false,
         },
         {
           name: "冬桃",
           id: "3",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/冬桃.jpg'),
+          active: false,
         },
         {
           name: "水果黄瓜",
           id: "4",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/水果黄瓜.jpg'),
+          active: false,
         },
         {
           name: "青葡萄",
           id: "5",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/青葡萄.jpg'),
+          active: false,
         },
         {
           name: "黑美人",
           id: "6",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/黑美人.jpg'),
+          active: false,
         },
         {
           name: "阳光玫瑰葡萄",
           id: "7",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/阳光玫瑰葡萄.jpg'),
+          active: false,
         },
         {
           name: "猕猴桃",
           id: "8",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/猕猴桃.jpg'),
+          active: false,
         },
         {
           name: "橙子",
           id: "9",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/橙子.jpg'),
+          active: false,
         },
         {
           name: "龙眼",
           id: "10",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/龙眼.jpg'),
+          active: false,
         },
         {
           name: "枣子",
           id: "11",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/枣子.jpg'),
+          active: false,
         },
         {
           name: "火龙果",
           id: "12",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/火龙果.jpg'),
+          active: false,
         },
         {
           name: "凤梨",
           id: "13",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/凤梨.jpg'),
+          active: false,
         },
         {
           name: "红柚",
           id: "14",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/红柚.jpg'),
+          active: false,
         },
         {
           name: "白柚",
           id: "15",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/白柚.jpg'),
+          active: false,
         },
         {
           name: "哈密瓜",
           id: "16",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/哈密瓜.jpg'),
+          active: false,
         },
         {
           name: "芒果",
           id: "17",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/芒果.jpg'),
+          active: false,
         },
         {
           name: "西瓜",
           id: "18",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/西瓜.jpg'),
+          active: false,
         },
         {
           name: "苹果",
           id: "19",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/苹果.jpg'),
+          active: false,
         },
         {
           name: "千禧",
           id: "20",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/千禧.jpg'),
+          active: false,
         },
         {
           name: "青提",
           id: "21",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/青提.jpg'),
+          active: false,
         },
         {
           name: "红提",
           id: "22",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/红提.jpg'),
+          active: false,
         },
         {
           name: "菠萝蜜",
           id: "23",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/菠萝蜜.jpg'),
+          active: false,
         },
         {
           name: "黄桃",
           id: "24",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/黄桃.jpg'),
+          active: false,
         },
         {
           name: "橘子",
           id: "25",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/橘子.jpg'),
+          active: false,
         },
         {
           name: "榴莲",
           id: "26",
-          src: "../assets/logo.png"
+          src: require('../assets/fruit/榴莲.jpg'),
+          active: false,
+        },
+        {
+          name: "葡萄",
+          id: "27",
+          src: require('../assets/fruit/葡萄.jpg'),
+          active: false,
         }
       ]
     };
+  },
+  created(){
+    let date = new Date()
+    this.menu = this.menuList[date.getDay()]
+  },
+  methods:{
+    switchChange(index){
+      console.log(index)
+    }
   }
 };
 </script>

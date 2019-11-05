@@ -130,9 +130,21 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$message("登录成功");
+          // axios.
+          // post("/sublim/",{
+          //   name: this.loginForm.username,
+          //   password: this.loginForm.password
+          // })
+          // .then(res => {
+          //   if (res.data.status === 200){
+          //     this.$router.push({ name: "order" });
+          //   }
+          //   else {
+          //     this.$message('res.data.msg')
+          //   }
+          // })
           this.$router.push({ name: "order" });
         } else {
-          console.log("error submit!!");
           return false;
         }
       });
