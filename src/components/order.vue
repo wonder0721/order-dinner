@@ -8,10 +8,10 @@
 
       <div class="food">
         <h3>请选择套餐类别</h3>
-        <div>
-          <el-radio v-model="radio1" label="A" border>A套餐（饭 + 水果）</el-radio>
-          <el-radio v-model="radio1" label="B" border>B套餐（仅水果）</el-radio>
-        </div>
+        <el-radio-group v-model="radio1" @change="foodChange(radio1)">
+          <el-radio label="A" border>A套餐（饭 + 水果/一份）</el-radio>
+          <el-radio label="B" border>B套餐（仅水果/二份）</el-radio>
+        </el-radio-group>
       </div>
 
       <div class="group">
@@ -29,12 +29,18 @@
         <div class="fruit-box">
           <el-row :gutter="10">
             <el-col :span="4" v-for="(item,i) in fruitList" :key="item.id">
-              <el-card :body-style="{ padding: '0px' }">
+              <el-card :body-style="{ padding: '0px' }" :class="{active: item.active}">
                 <img :src="item.src" class="card-image" />
                 <div style="padding: 5px; backgroundColor: lightblue">
                   <div class="fruit-select">
                     <span>{{item.name}}</span>
-                    <el-switch v-model="item.active" active-color="#409EFF" inactive-color="#DCDFE6" @change="switchChange(i)"></el-switch>
+                    <el-switch
+                      v-model="item.active"
+                      active-color="#409EFF"
+                      inactive-color="#DCDFE6"
+                      @change="switchChange(i)"
+                      :disabled="isDisable(item.active)"
+                    ></el-switch>
                   </div>
                 </div>
               </el-card>
@@ -43,8 +49,28 @@
         </div>
       </div>
 
+      <div class="snack">
+        <h3>可选零食类</h3>
+        <div class="snack-select">
+          <el-checkbox-group v-model="checkList">
+            <el-checkbox label="罐装核桃仁 ￥10" border></el-checkbox>
+            <el-checkbox label="海苔 ￥8.8" border></el-checkbox>
+            <el-checkbox label="蛋白鱼皮 ￥8.8" border></el-checkbox>
+            <el-checkbox label="水果干（草莓干，杏脯干，蔓越莓干） ￥10" border></el-checkbox>
+            <el-checkbox label="辣条 ￥2.5 / 一包" border></el-checkbox>
+            <el-checkbox label="乡巴佬鸭腿 ￥5元 / 一包" border></el-checkbox>
+            <el-checkbox label="锅巴 ￥3.8 / 一包" border></el-checkbox>
+            <el-checkbox label="牛肉干 ￥10元 / 一罐" border></el-checkbox>
+            <el-checkbox label="散称饼干小零食 ￥10元 / 一斤" border></el-checkbox>
+            <el-checkbox label="散称面包好的 ￥20" border></el-checkbox>
+            <el-checkbox label="豆干 ￥16" border></el-checkbox>
+            <el-checkbox label="普通面包 ￥16 / 一斤" border></el-checkbox>
+          </el-checkbox-group>
+        </div>
+      </div>
+
       <div class="submit">
-        <el-button type="primary">提交</el-button>
+        <el-button type="primary" @click="save()">提交</el-button>
       </div>
     </div>
   </div>
@@ -56,7 +82,8 @@
   color: #2c3e50;
   background-color: #f8f8f8;
   .container-box {
-    width: 1100px;
+    width: 100%;
+    max-width: 1200px;
     background-color: #fff;
     padding-bottom: 30px;
     margin: 0 auto;
@@ -93,6 +120,7 @@
       }
     }
     .fruit {
+      padding: 0 20px;
       margin-top: 30px;
       h3 {
         font-size: 24px;
@@ -108,14 +136,29 @@
         height: 100%;
         display: block;
       }
-      .el-card{
-        .active{
-          box-shadow: 0 2px 12px 0 rgba(255,0,0,0.7)
-        } 
+      .el-card {
+        min-width: 140px;
+      }
+      .active {
+        box-shadow: 0 2px 12px 0 rgba(255, 0, 0, 0.7);
       }
       /deep/ .el-col-4 {
         padding-bottom: 5px;
         padding-top: 5px;
+      }
+    }
+    .snack {
+      padding: 0 20px;
+      margin-top: 30px;
+      h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #409eff;
+      }
+      .snack-select {
+        .el-checkbox{
+          margin-bottom: 20px;
+        }
       }
     }
     .submit {
@@ -136,190 +179,235 @@ export default {
     return {
       radio1: "A",
       radio2: "产品",
-      menu: '',
+      menu: "",
+      fruitNumber: 1,
+      orderFruit: true,
       menuList: [
-        '无',
-        '鸡腿，啤酒鸭，酱爆猪干，炒生菜',
-        '红烧牛肉，鸭翅根，木须肉酸辣白菜',
-        '红烧虾，土豆烧鸡，肉沫茄子，平菇毛白菜',
-        '红烧鲫鱼，咸鸭烧毛豆，杭辣炒蛋，麻辣豆腐',
-        '雪菜黑鱼，土豆烧鸡，蒜台香肠，大蒜香干',
-        '无'
+        "无",
+        "鸡腿，啤酒鸭，酱爆猪干，炒生菜",
+        "红烧牛肉，鸭翅根，木须肉酸辣白菜",
+        "红烧虾，土豆烧鸡，肉沫茄子，平菇毛白菜",
+        "红烧鲫鱼，咸鸭烧毛豆，杭辣炒蛋，麻辣豆腐",
+        "雪菜黑鱼，土豆烧鸡，蒜台香肠，大蒜香干",
+        "无"
       ],
       fruitList: [
         {
           name: "青色脆皮金桔",
           id: "1",
-          src: require('../assets/fruit/金桔.jpg'),
-          active: false,
+          src: require("../assets/fruit/金桔.jpg"),
+          active: false
         },
         {
           name: "红脆李",
           id: "2",
-          src: require('../assets/fruit/红脆李.jpg'),
-          active: false,
+          src: require("../assets/fruit/红脆李.jpg"),
+          active: false
         },
         {
           name: "冬桃",
           id: "3",
-          src: require('../assets/fruit/冬桃.jpg'),
-          active: false,
+          src: require("../assets/fruit/冬桃.jpg"),
+          active: false
         },
         {
           name: "水果黄瓜",
           id: "4",
-          src: require('../assets/fruit/水果黄瓜.jpg'),
-          active: false,
+          src: require("../assets/fruit/水果黄瓜.jpg"),
+          active: false
         },
         {
           name: "青葡萄",
           id: "5",
-          src: require('../assets/fruit/青葡萄.jpg'),
-          active: false,
+          src: require("../assets/fruit/青葡萄.jpg"),
+          active: false
         },
         {
           name: "黑美人",
           id: "6",
-          src: require('../assets/fruit/黑美人.jpg'),
-          active: false,
+          src: require("../assets/fruit/黑美人.jpg"),
+          active: false
         },
         {
           name: "阳光玫瑰葡萄",
           id: "7",
-          src: require('../assets/fruit/阳光玫瑰葡萄.jpg'),
-          active: false,
+          src: require("../assets/fruit/阳光玫瑰葡萄.jpg"),
+          active: false
         },
         {
           name: "猕猴桃",
           id: "8",
-          src: require('../assets/fruit/猕猴桃.jpg'),
-          active: false,
+          src: require("../assets/fruit/猕猴桃.jpg"),
+          active: false
         },
         {
           name: "橙子",
           id: "9",
-          src: require('../assets/fruit/橙子.jpg'),
-          active: false,
+          src: require("../assets/fruit/橙子.jpg"),
+          active: false
         },
         {
           name: "龙眼",
           id: "10",
-          src: require('../assets/fruit/龙眼.jpg'),
-          active: false,
+          src: require("../assets/fruit/龙眼.jpg"),
+          active: false
         },
         {
           name: "枣子",
           id: "11",
-          src: require('../assets/fruit/枣子.jpg'),
-          active: false,
+          src: require("../assets/fruit/枣子.jpg"),
+          active: false
         },
         {
           name: "火龙果",
           id: "12",
-          src: require('../assets/fruit/火龙果.jpg'),
-          active: false,
+          src: require("../assets/fruit/火龙果.jpg"),
+          active: false
         },
         {
           name: "凤梨",
           id: "13",
-          src: require('../assets/fruit/凤梨.jpg'),
-          active: false,
+          src: require("../assets/fruit/凤梨.jpg"),
+          active: false
         },
         {
           name: "红柚",
           id: "14",
-          src: require('../assets/fruit/红柚.jpg'),
-          active: false,
+          src: require("../assets/fruit/红柚.jpg"),
+          active: false
         },
         {
           name: "白柚",
           id: "15",
-          src: require('../assets/fruit/白柚.jpg'),
-          active: false,
+          src: require("../assets/fruit/白柚.jpg"),
+          active: false
         },
         {
           name: "哈密瓜",
           id: "16",
-          src: require('../assets/fruit/哈密瓜.jpg'),
-          active: false,
+          src: require("../assets/fruit/哈密瓜.jpg"),
+          active: false
         },
         {
           name: "芒果",
           id: "17",
-          src: require('../assets/fruit/芒果.jpg'),
-          active: false,
+          src: require("../assets/fruit/芒果.jpg"),
+          active: false
         },
         {
           name: "西瓜",
           id: "18",
-          src: require('../assets/fruit/西瓜.jpg'),
-          active: false,
+          src: require("../assets/fruit/西瓜.jpg"),
+          active: false
         },
         {
           name: "苹果",
           id: "19",
-          src: require('../assets/fruit/苹果.jpg'),
-          active: false,
+          src: require("../assets/fruit/苹果.jpg"),
+          active: false
         },
         {
           name: "千禧",
           id: "20",
-          src: require('../assets/fruit/千禧.jpg'),
-          active: false,
+          src: require("../assets/fruit/千禧.jpg"),
+          active: false
         },
         {
           name: "青提",
           id: "21",
-          src: require('../assets/fruit/青提.jpg'),
-          active: false,
+          src: require("../assets/fruit/青提.jpg"),
+          active: false
         },
         {
           name: "红提",
           id: "22",
-          src: require('../assets/fruit/红提.jpg'),
-          active: false,
+          src: require("../assets/fruit/红提.jpg"),
+          active: false
         },
         {
           name: "菠萝蜜",
           id: "23",
-          src: require('../assets/fruit/菠萝蜜.jpg'),
-          active: false,
+          src: require("../assets/fruit/菠萝蜜.jpg"),
+          active: false
         },
         {
           name: "黄桃",
           id: "24",
-          src: require('../assets/fruit/黄桃.jpg'),
-          active: false,
+          src: require("../assets/fruit/黄桃.jpg"),
+          active: false
         },
         {
           name: "橘子",
           id: "25",
-          src: require('../assets/fruit/橘子.jpg'),
-          active: false,
+          src: require("../assets/fruit/橘子.jpg"),
+          active: false
         },
         {
           name: "榴莲",
           id: "26",
-          src: require('../assets/fruit/榴莲.jpg'),
-          active: false,
+          src: require("../assets/fruit/榴莲.jpg"),
+          active: false
         },
         {
           name: "葡萄",
           id: "27",
-          src: require('../assets/fruit/葡萄.jpg'),
-          active: false,
+          src: require("../assets/fruit/葡萄.jpg"),
+          active: false
         }
-      ]
+      ],
+      checkList: []
     };
   },
-  created(){
-    let date = new Date()
-    this.menu = this.menuList[date.getDay()]
+  created() {
+    let date = new Date();
+    this.menu = this.menuList[date.getDay()];
   },
-  methods:{
-    switchChange(index){
-      console.log(index)
+  methods: {
+    // 更换套餐类别
+    foodChange(value) {
+      // 能选择的最多水果数目
+      if (value == "A") {
+        this.fruitNumber = 1;
+      } else {
+        this.fruitNumber = 2;
+      }
+      // 套餐类别更换后重置所有水果按钮
+      this.fruitList.forEach(item => {
+        item.active = false;
+      });
+      this.orderFruit = true;
+    },
+    // 选择水果
+    switchChange(index) {
+      console.log(index);
+      let number = 0;
+      this.fruitList.forEach(item => {
+        if (item.active === true) {
+          number++;
+        }
+      });
+      if (number == this.fruitNumber) {
+        this.orderFruit = false;
+      } else {
+        this.orderFruit = true;
+      }
+    },
+    isDisable(c) {
+      return !c && !this.orderFruit;
+    },
+    save() {
+      let orderList = {};
+      orderList.food = this.radio1;
+      orderList.group = this.radio2;
+      orderList.fruitList = [];
+      this.fruitList.forEach(item => {
+        if (item.active == true) {
+          orderList.fruitList.push(item);
+        }
+      });
+      console.log(orderList);
     }
-  }
+  },
+  computed: {}
 };
 </script>
