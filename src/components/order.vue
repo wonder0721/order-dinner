@@ -28,7 +28,7 @@
         <h3>可选水果类</h3>
         <div class="fruit-box">
           <el-row :gutter="10">
-            <el-col :span="4" v-for="(item,i) in fruitList" :key="item.id">
+            <el-col :xs="8" :sm="6" :md="4" :lg="4" v-for="(item,i) in fruitList" :key="item.id">
               <el-card :body-style="{ padding: '0px' }" :class="{active: item.active}">
                 <img :src="item.src" class="card-image" />
                 <div style="padding: 5px; backgroundColor: lightblue">
@@ -84,6 +84,7 @@
   .container-box {
     width: 100%;
     max-width: 1200px;
+    // min-width: 500px;
     background-color: #fff;
     padding-bottom: 30px;
     margin: 0 auto;
@@ -137,12 +138,12 @@
         display: block;
       }
       .el-card {
-        min-width: 140px;
+        // min-width: 140px;
       }
       .active {
         box-shadow: 0 2px 12px 0 rgba(255, 0, 0, 0.7);
       }
-      /deep/ .el-col-4 {
+      /deep/ .el-col {
         padding-bottom: 5px;
         padding-top: 5px;
       }

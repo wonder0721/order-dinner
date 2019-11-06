@@ -6,7 +6,8 @@ module.exports = {
     outputDir: 'dist',
     // webpack-dev-server 相关配置
     devServer: {
-        // port: 8888,
+        port: 8080,
         // ...
+        host: '192.168.0.213',
     },
 }

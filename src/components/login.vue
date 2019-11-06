@@ -36,8 +36,10 @@
 .login {
   min-height: 100%;
   background-color: lightblue;
+  padding: 0 10px;
   .login-box {
-    width: 600px;
+    max-width: 600px;
+    width: 100%;
     height: 450px;
     position: absolute;
     top: 50%;
