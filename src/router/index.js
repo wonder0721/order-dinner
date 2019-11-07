@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../components/login.vue'
-import Order from '../components/order.vue'
+import Login from '../views/login.vue'
+import Order from '../views/order.vue'
 
 Vue.use(VueRouter)
 

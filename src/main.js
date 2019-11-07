@@ -7,8 +7,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '../public/reset.css'
 import './assets/iconfont/iconfont.css'
 import axios from 'axios'
+import Qs from 'qs'
+Vue.prototype.$axios = axios
 
 Vue.config.productionTip = false
+
+Vue.prototype.qs = Qs;
 
 Vue.use(ElementUI)
 

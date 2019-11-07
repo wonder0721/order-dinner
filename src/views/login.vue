@@ -36,10 +36,9 @@
 .login {
   min-height: 100%;
   background-color: lightblue;
-  padding: 0 10px;
   .login-box {
     max-width: 600px;
-    width: 100%;
+    width: 90%;
     height: 450px;
     position: absolute;
     top: 50%;
@@ -132,8 +131,8 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$message("登录成功");
-          // axios.
-          // post("/sublim/",{
+          // this.$axios.
+          // post("/users",{
           //   name: this.loginForm.username,
           //   password: this.loginForm.password
           // })

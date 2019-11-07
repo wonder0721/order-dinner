@@ -27,8 +27,8 @@
       <div class="fruit">
         <h3>可选水果类</h3>
         <div class="fruit-box">
-          <el-row :gutter="10">
-            <el-col :xs="8" :sm="6" :md="4" :lg="4" v-for="(item,i) in fruitList" :key="item.id">
+          <el-row :gutter="20">
+            <el-col :xs="12" :sm="6" :md="4" :lg="4" v-for="(item,i) in fruitList" :key="item.id">
               <el-card :body-style="{ padding: '0px' }" :class="{active: item.active}">
                 <img :src="item.src" class="card-image" />
                 <div style="padding: 5px; backgroundColor: lightblue">
@@ -137,15 +137,15 @@
         height: 100%;
         display: block;
       }
-      .el-card {
-        // min-width: 140px;
-      }
+      // .el-card {
+      //   // min-width: 140px;
+      // }
       .active {
         box-shadow: 0 2px 12px 0 rgba(255, 0, 0, 0.7);
       }
       /deep/ .el-col {
-        padding-bottom: 5px;
-        padding-top: 5px;
+        padding-bottom: 10px;
+        padding-top: 10px;
       }
     }
     .snack {
@@ -182,7 +182,7 @@ export default {
       radio2: "产品",
       menu: "",
       fruitNumber: 1,
-      orderFruit: true,
+      canOrderFruit: true,
       menuList: [
         "无",
         "鸡腿，啤酒鸭，酱爆猪干，炒生菜",
@@ -376,7 +376,7 @@ export default {
       this.fruitList.forEach(item => {
         item.active = false;
       });
-      this.orderFruit = true;
+      this.canOrderFruit = true;
     },
     // 选择水果
     switchChange(index) {
@@ -387,14 +387,10 @@ export default {
           number++;
         }
       });
-      if (number == this.fruitNumber) {
-        this.orderFruit = false;
-      } else {
-        this.orderFruit = true;
-      }
+      this.canOrderFruit = number == this.fruitNumber?false:true
     },
     isDisable(c) {
-      return !c && !this.orderFruit;
+      return !c && !this.canOrderFruit;
     },
     save() {
       let orderList = {};
