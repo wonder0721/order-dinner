@@ -9,8 +9,8 @@
       <div class="food">
         <h3>请选择套餐类别</h3>
         <el-radio-group v-model="radio1" @change="foodChange(radio1)">
-          <el-radio label="A" border>A套餐（饭 + 水果/一份）</el-radio>
-          <el-radio label="B" border>B套餐（仅水果/二份）</el-radio>
+          <el-radio label="A" border>A套餐（饭 + 水果）</el-radio>
+          <el-radio label="B" border>B套餐（仅水果）</el-radio>
         </el-radio-group>
       </div>
 
@@ -52,20 +52,13 @@
       <div class="snack">
         <h3>可选零食类</h3>
         <div class="snack-select">
-          <el-checkbox-group v-model="checkList">
-            <el-checkbox label="罐装核桃仁 ￥10" border></el-checkbox>
-            <el-checkbox label="海苔 ￥8.8" border></el-checkbox>
-            <el-checkbox label="蛋白鱼皮 ￥8.8" border></el-checkbox>
-            <el-checkbox label="水果干（草莓干，杏脯干，蔓越莓干） ￥10" border></el-checkbox>
-            <el-checkbox label="辣条 ￥2.5 / 一包" border></el-checkbox>
-            <el-checkbox label="乡巴佬鸭腿 ￥5元 / 一包" border></el-checkbox>
-            <el-checkbox label="锅巴 ￥3.8 / 一包" border></el-checkbox>
-            <el-checkbox label="牛肉干 ￥10元 / 一罐" border></el-checkbox>
-            <el-checkbox label="散称饼干小零食 ￥10元 / 一斤" border></el-checkbox>
-            <el-checkbox label="散称面包好的 ￥20" border></el-checkbox>
-            <el-checkbox label="豆干 ￥16" border></el-checkbox>
-            <el-checkbox label="普通面包 ￥16 / 一斤" border></el-checkbox>
-          </el-checkbox-group>
+          <div
+            class="snacks"
+            v-for="(item) in snackList"
+            :key="item.id"
+            :class="{active: item.active}"
+            @click="item.active = !item.active"
+          >{{item.name}}</div>
         </div>
       </div>
 
@@ -86,7 +79,7 @@
     max-width: 1200px;
     // min-width: 500px;
     background-color: #fff;
-    padding-bottom: 30px;
+    // padding-bottom: 30px;
     margin: 0 auto;
     overflow: hidden;
     .menu {
@@ -157,8 +150,32 @@
         color: #409eff;
       }
       .snack-select {
-        .el-checkbox{
+        .el-checkbox {
           margin-bottom: 20px;
+        }
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        .snacks {
+          min-width: 50px;
+          padding: 0 10px;
+          margin-bottom: 20px;
+          height: 30px;
+          font-size: 16px;
+          line-height: 30px;
+          color: #409eff;
+          text-align: center;
+          border: 1px solid #409eff;
+          border-radius: 15px;
+          background-color: #fff;
+          cursor: pointer;
+          // &:hover {
+          //   background-color: lightblue;
+          // }
+        }
+        .active {
+          background-color: #409eff;
+          color: #fff;
         }
       }
     }
@@ -183,6 +200,8 @@ export default {
       menu: "",
       fruitNumber: 1,
       canOrderFruit: true,
+      selectedFruit: "无",
+      selectedSnack: "无",
       menuList: [
         "无",
         "鸡腿，啤酒鸭，酱爆猪干，炒生菜",
@@ -356,7 +375,22 @@ export default {
           active: false
         }
       ],
-      checkList: []
+      snackList: [
+        { name: "核桃仁", id: "1", active: false },
+        { name: "海苔", id: "2", active: false },
+        { name: "蛋白鱼皮", id: "3", active: false },
+        { name: "水果干", id: "4", active: false },
+        { name: "散称饼干小零食", id: "5", active: false },
+        { name: "乡巴佬鸭腿", id: "6", active: false },
+        { name: "锅巴", id: "7", active: false },
+        { name: "牛肉干", id: "8", active: false },
+        { name: "辣条", id: "9", active: false },
+        { name: "散称面包", id: "10", active: false },
+        { name: "豆干", id: "11", active: false },
+        { name: "普通面包", id: "12", active: false }
+      ],
+      checkList: [],
+      orderList: []
     };
   },
   created() {
@@ -387,22 +421,62 @@ export default {
           number++;
         }
       });
-      this.canOrderFruit = number == this.fruitNumber?false:true
+      this.canOrderFruit = number == this.fruitNumber ? false : true;
     },
     isDisable(c) {
       return !c && !this.canOrderFruit;
     },
     save() {
-      let orderList = {};
-      orderList.food = this.radio1;
-      orderList.group = this.radio2;
-      orderList.fruitList = [];
+      this.orderList.food = this.radio1;
+      this.orderList.group = this.radio2;
+      this.orderList.fruitList = [];
+      this.orderList.snackList = [];
+      let arr1 = [];
+      let arr2 = [];
       this.fruitList.forEach(item => {
         if (item.active == true) {
-          orderList.fruitList.push(item);
+          this.orderList.fruitList.push(item);
+          arr1.push(item.name);
+          this.selectedFruit = arr1.join(" ");
         }
       });
-      console.log(orderList);
+      this.snackList.forEach(item => {
+        if (item.active == true) {
+          this.orderList.snackList.push(item);
+          arr2.push(item.name);
+          this.selectedSnack = arr2.join(" ");
+        }
+      });
+      console.log(this.orderList);
+
+      this.$confirm(
+      `<p>套餐：${this.radio1}</p>
+      <p>组别：${this.radio2}</p>
+      <p>水果：${this.selectedFruit}</p>
+      <p>零食：${this.selectedSnack}</p>`,
+        "请确认所选内容",
+        {
+          dangerouslyUseHTMLString: true,
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+          center: true
+        }
+      )
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "提交成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消"
+          });
+          this.orderList = [];
+          this.selectedSnack = this.selectedFruit = "无";
+        });
     }
   },
   computed: {}
