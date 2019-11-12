@@ -464,6 +464,15 @@ export default {
         }
       )
         .then(() => {
+          // this.$axios.post('/api/order/add/',this.orderList)
+          // .then(res => {
+          //   if (res.status == 200) {
+          //     console.log('ok')
+          //   }
+          //   else{
+          //     console.log(res.data.msg)
+          //   }
+          // })
           this.$message({
             type: "success",
             message: "提交成功!"

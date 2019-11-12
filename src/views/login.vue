@@ -26,6 +26,7 @@
           </el-form>
 
           <p class="tips">如忘记密码, 请联系管理员</p>
+          <button @click="test()">firstapi</button>
         </div>
       </div>
     </div>
@@ -132,23 +133,31 @@ export default {
         if (valid) {
           this.$message("登录成功");
           // this.$axios.
-          // post("/users",{
-          //   name: this.loginForm.username,
+          // post("/api/user/login",{
+          //   username: this.loginForm.username,
           //   password: this.loginForm.password
           // })
           // .then(res => {
           //   if (res.data.status === 200){
+          //     sessionStorage.setItem('user',response.data.nickname)
           //     this.$router.push({ name: "order" });
           //   }
           //   else {
           //     this.$message('res.data.msg')
           //   }
           // })
-          this.$router.push({ name: "order" });
+          sessionStorage.setItem('user','abc')
+          this.$router.push({ name: 'order' });
+          // let redirect = decodeURIComponent(this.$route.query.redirect || '/')
+          // console.log(this.$route)
+          // this.$router.push({ path: redirect })
         } else {
           return false;
         }
       });
+    },
+    test(){
+      this.$axios.post("/api/user/firstapi").then(res => console.log(res))
     }
   }
 };
